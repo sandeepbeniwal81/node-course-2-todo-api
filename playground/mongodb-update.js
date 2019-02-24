@@ -9,19 +9,33 @@ MongoClient.connect(url, (error, client) => {
     console.log('Connection is okay')
     const db = client.db(dbName)
     const collection = db.collection('Users');
-
-    // collection.deleteOne({name: "Sandeep Beniwal"}).then((result) => {
+ 
+    // collection.findOneAndUpdate({
+    //     _id: new MongoClient.ObjectId('5c724fa73a12df63c6a797f8')
+    //     },{
+    //         $set:{
+    //             age:30
+    //         }
+    //     }, {
+    //         returnOriginal: false
+    //     }).then((result) => {
     //     console.log(result);
     // })
 
-    // collection.deleteMany({name: "Sandeep Beniwal"}).then((result) => {
-    //     console.log(result);
-    // })
-    collection.findOneAndDelete({age: 25}).then((result) => {
+    collection.findOneAndUpdate({
+        _id: new MongoClient.ObjectId('5c724fa73a12df63c6a797f8')
+        },{
+            $set:{
+                name: "Mark Christopher"
+            },
+            $inc:{
+                age: 1
+            }
+        }, {
+            returnOriginal: false
+        }).then((result) => {
         console.log(result);
     })
-    
-
     ///////collection.find({_id: new MongoClient.ObjectId('5c7245e655de9663059a97ab')}).toArray((error, docs) => {
     // collection.find({name: "Sandeep Beniwal"}).toArray((error, docs) => {    
     //     if (error) return process.exit(1)
