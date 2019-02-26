@@ -3,6 +3,7 @@ const validator = require('validator');
 const jwt = require('jsonwebtoken');
 const _ =require('lodash')
 
+
 var UserSchema = new mongoose.Schema({
     email :{
         type: String,
@@ -32,6 +33,13 @@ var UserSchema = new mongoose.Schema({
     }]   
 });
 
+// UserSchema.methods.toJSON = function() {
+//     var user = this.toObject();
+//     delete user.password;
+//     delete user.tokens;
+//     return user;
+// }
+
 UserSchema.methods.toJSON = function() {
     var user = this;
     var userObject = user.toObject();
@@ -43,12 +51,38 @@ UserSchema.methods.generateAuthToken =  function() {
     var user = this;
     var access = 'auth';
     var token = jwt.sign({_id: user._id.toHexString(), access}, 'abc123').toString();
-
+    
     user.tokens = user.tokens.concat([{access, token}]);
-
+    console.log('token is :',token)
     return token;
 }
 
+UserSchema.statics.findByToken = function(token) {
+    var user = this;
+    var decoded;
+
+    try{
+        decoded = jwt.verify(token.toString(), 'abc123');
+    } catch (e) {
+        return Promise.reject();
+    }    
+
+    // return User.findOne({'_id':decoded._id,
+    // 'tokens.token': token,
+    // 'tokens.access': 'auth'}, function (err, result) {
+    //     if (err) {
+    //       console.log(err);
+    //     }
+    //     console.log(result);
+    //   }).catch((e) =>{
+    //       console.log(e);
+    //   });
+    return User.findOne({
+        '_id': decoded._id,
+        'tokens.token': token,
+        'tokens.access': 'auth'
+    })
+}
 
 var User = mongoose.model('User', UserSchema);
 
