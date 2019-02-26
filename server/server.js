@@ -48,6 +48,28 @@ app.get('/todos/:id',(req,res) => {
   })
 })
 
+app.delete('/todos/:id', (req,res) => {
+  var todoId = req.params.id;
+   console.log('123'); 
+  if(!mongodb.ObjectID.isValid(todoId)) {
+    console.log('1234'); 
+    return res.status(404).send();
+  }
+
+  Todo.findByIdAndRemove(todoId).then ((todo) => {
+    if(!todo) {
+      console.log('12345'); 
+      return res.status(404).send();
+    }
+    console.log('123456'); 
+    res.send(todo);
+    console.log(todo);
+  }).catch((e) => {
+    console.log('1234567'); 
+    res.status(400).send();
+  })
+})
+
 app.listen(port, () => {
   console.log(`Started on port :${port}`);
 });
